@@ -1,0 +1,42 @@
+version: 2.1
+jobs:
+  lint-dockerfile:
+    docker:
+      - image: docker:latest
+    steps:
+      - checkout
+      - run:
+          name: Install hadolint
+          command: |
+            wget https://github.com/hadolint/hadolint/releases/download/v2.7.0/hadolint-Linux-x86_64 -O /bin/hadolint
+            chmod +x /bin/hadolint
+      - run:
+          name: Lint Dockerfile
+          command: hadolint Dockerfile
+
+  build-app-karsajobs-ui:
+    docker:
+      - image: cimg/base:stable
+      auth:
+        username: raihanndaffaa
+        password: Daffa120701
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
+      - run:
+          name: Execute  build_push_image_karsajobs_ui.sh
+          command: |
+
+            chmod +x build_push_image_karsajobs_ui.sh
+            ./build_push_image_karsajobs_ui.sh
+
+workflows:
+  version: 2
+  karsajobs-ui:
+    jobs:
+      - lint-dockerfile
+      - build-app-karsajobs-ui:
+          requires:
+            - lint-dockerfile
