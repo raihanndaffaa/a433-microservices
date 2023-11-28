@@ -25,7 +25,7 @@ spec:
           env:
             - name: VUE_APP_BACKEND
               # URL backend yang digunakan
-              value: http://192.168.49.2:32222
+              value: http://192.168.49.2:31412
           ports:
             #port yang diexpose oleh container
             - containerPort: 8000
