@@ -1,0 +1,45 @@
+# Mendefinisikan Kubernetes Deployment untuk backend aplikasi Karsa Jobs
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  #nama dari deployment
+  name: karsajobs-deployment
+spec:
+  #jumlah replica deployment
+  replicas: 1
+  #set pod selector berdasarkan pod label
+  selector:
+    matchLabels:
+      app: karsajobs
+  #template pod
+  template:
+    metadata:
+      labels:
+        app: karsajobs
+    spec:
+      containers:
+        - name: karsajobs-container
+          # Nama dan versi image Docker yang digunakan untuk container.
+          image: ghcr.io/raihanndaffaa/karsajobs:latest
+          imagePullPolicy: IfNotPresent
+          #port yang diexpose oleh container
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_PORT
+              value: '8080'
+            #Host mongoDB melalui mongo-service
+            - name: MONGO_HOST
+              value: 'mongo-service'
+            #username dari mongo-secret
+            - name: MONGO_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_ROOT_USERNAME
+            #password dari mongo-secret
+            - name: MONGO_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_ROOT_PASSWORD

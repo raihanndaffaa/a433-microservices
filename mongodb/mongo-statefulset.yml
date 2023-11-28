@@ -1,0 +1,63 @@
+# Mendefinisikan Kubernetes StatefulSet untuk MongoDB
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  #nama statefulset
+  name: mongo-statefulset
+  #menentukan label statefulset
+  labels:
+    app: mongo
+spec:
+  #memilih pod yang akan dilayani oleh statefulset
+  selector:
+    matchLabels:
+      app: mongo
+      tier: backend
+  #nama service yang digunakan oleh statefulset
+  serviceName: mongo-service
+  #jumlah replika
+  replicas: 1
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: mongo
+        tier: backend
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        #image yang digunakan container
+        - image: mongo:4.4
+          name: mongo-container
+          env:
+            #username root dari file credential.
+            - name: MONGO_INITDB_ROOT_USERNAME_FILE
+              value: /etc/mongo-credentials/MONGO_ROOT_USERNAME # Value Environment variable untuk username root.
+            #password root dari file credential.
+            - name: MONGO_INITDB_ROOT_PASSWORD_FILE
+              value: /etc/mongo-credentials/MONGO_ROOT_PASSWORD # Value Environment variable untuk password root.
+          ports:
+            #port yang diexpose container
+            - containerPort: 27017
+              name: mongo
+          #volume mounts untuk menyimpan data , konfigurasi dan credentials mongoDB
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+            - name: mongo-config
+              mountPath: /config
+            - name: mongo-secret
+              mountPath: /etc/mongo-credentials
+      volumes:
+        #pv untuk menyimpan data di mongoDB
+        - name: mongo-persistent-storage
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+        # ConfigMap untuk konfigurasi MongoDB.
+        - name: mongo-config
+          configMap:
+            name: mongo-config
+        # Secret untuk menyimpan credential MongoDB.
+        - name: mongo-secret
+          secret:
+            secretName: mongo-secret

@@ -1,0 +1,9 @@
+# Mendefinisikan Kubernetes ConfigMap untuk konfigurasi MongoDB
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-config
+data:
+  mongo.conf: |
+    storage:
+      dbPath: /data/db

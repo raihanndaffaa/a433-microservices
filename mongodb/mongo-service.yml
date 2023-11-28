@@ -1,0 +1,18 @@
+# Mendefinisikan Kubernetes Service untuk layanan MongoDB
+apiVersion: v1
+kind: Service
+metadata:
+  #menentukan labels pada service
+  labels:
+    app: karsajobs
+  #nama service
+  name: mongo-service
+spec:
+  ports:
+    # Port yang akan diexpose oleh Service di dalam cluster.
+    - port: 27017
+    #menentukan pod yang akan dilayani oleh service
+  selector:
+    app: karsajobs
+    tier: backend
+  clusterIP: None

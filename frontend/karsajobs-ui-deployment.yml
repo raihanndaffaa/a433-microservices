@@ -1,0 +1,31 @@
+# Mendefinisikan Kubernetes Deployment untuk frontend aplikasi Karsa Jobs
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  #nama deployment
+  name: karsajobs-ui-deployment
+spec:
+  #Jumlah replica
+  replicas: 1
+  #set pod selector berdasarkan pod label
+  selector:
+    matchLabels:
+      app: karsajobs-ui
+  #template pod
+  template:
+    metadata:
+      labels:
+        app: karsajobs-ui
+    spec:
+      containers:
+        - name: karsajobs-ui-container
+          # Nama dan versi image Docker yang digunakan untuk container.
+          image: ghcr.io/raihanndaffaa/karsajobs-ui:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: VUE_APP_BACKEND
+              # URL backend yang digunakan
+              value: http://192.168.49.2:32222
+          ports:
+            #port yang diexpose oleh container
+            - containerPort: 8000

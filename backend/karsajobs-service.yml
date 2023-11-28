@@ -1,0 +1,22 @@
+# Mendefinisikan Kubernetes Service untuk backend aplikasi Karsa Jobs
+apiVersion: v1
+kind: Service
+metadata:
+  #menentukan labels pada service
+  labels:
+    app: karsajobs
+  #nama service
+  name: karsajobs
+spec:
+  ports:
+    # Port yang akan diexpose oleh Service di dalam cluster.
+    - port: 8080
+      # Port pada pod yang akan menerima permintaan dari Service.
+      targetPort: 8080
+      #custom nodePort
+      nodePort: 32222
+  selector:
+    # memilih pod yang akan dilayani oleh Service.
+    app: karsajobs
+  #Jenis service
+  type: NodePort

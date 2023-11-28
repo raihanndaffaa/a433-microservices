@@ -1,0 +1,21 @@
+# Mendefinisikan Kubernetes Service untuk frontend aplikasi Karsa Jobs
+apiVersion: v1
+kind: Service
+metadata:
+  #menentukan labels pada service
+  labels:
+    app: karsajobs-ui
+  #nama service
+  name: karsajobs-ui-service
+spec:
+  ports:
+    # Port yang akan di-ekspos oleh Service di dalam cluster.
+    - port: 8000
+      # Port pada pod yang akan menerima permintaan dari Service.
+      targetPort: 8000
+      #custom nodePort
+      nodePort: 32221
+  selector:
+    # memilih pod yang akan dilayani oleh Service.
+    app: karsajobs-ui
+  type: NodePort
