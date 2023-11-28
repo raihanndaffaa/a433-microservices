@@ -1,0 +1,53 @@
+version: 2.1
+jobs:
+  lint-dockerfile:
+    docker:
+      - image: docker:19.03.12
+    steps:
+      - checkout
+      - run:
+          name: Install hadolint
+          command: |
+            wget https://github.com/hadolint/hadolint/releases/download/v2.7.0/hadolint-Linux-x86_64 -O /bin/hadolint
+            chmod +x /bin/hadolint
+      - run:
+          name: Lint Dockerfile
+          command: hadolint path/to/Dockerfile
+
+  test-app:
+    docker:
+      - image: golang:latest
+    steps:
+      - checkout
+      - run:
+          name: Run unit tests for backend
+          command: go test -v -short --count=1 $(go list ./...)
+
+  build-app-karsajobs:
+    docker:
+      - image: cimg/base:stable
+      auth:
+        username: raihanndaffaa
+        password: Daffa120701
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
+      - run:
+          name: Execute build_push_image_karsajobs.sh
+          command: |
+
+            chmod +x build_push_image_karsajobs.sh
+            ./build_push_image_karsajobs.sh
+
+workflows:
+  version: 2
+  karsajobs:
+    jobs:
+      - lint-dockerfile
+      - test-app
+      - build-app-karsajobs
+          requires:
+            - lint-dockerfile
+            - test-app
