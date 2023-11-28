@@ -14,7 +14,7 @@ spec:
       # Port pada pod yang akan menerima permintaan dari Service.
       targetPort: 8080
       #custom nodePort
-      nodePort: 32222
+      nodePort: 31412
   selector:
     # memilih pod yang akan dilayani oleh Service.
     app: karsajobs
